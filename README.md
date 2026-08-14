@@ -1,19 +1,18 @@
 # Take-Home Assignment — The Untested API
 
-A 2-day take-home assignment. You'll read unfamiliar code, write tests, track down bugs, and ship a small feature.
+**Submission by Ravinder** | Branch: `submission`
 
-Read **[ASSIGNMENT.md](./ASSIGNMENT.md)** for the full brief before you start.
+Read **[ASSIGNMENT.md](./ASSIGNMENT.md)** for the full brief.
 
 ---
 
-## A note on AI tools
+## What's in this submission
 
-You're welcome to use AI tools. What we're evaluating is your ability to read and reason about unfamiliar code — so your submission should reflect your own understanding, not just generated output.
-
-Concretely:
-- For each bug you report: include where in the code it lives and why it happens
-- For the feature you implement: briefly explain the design decisions you made
-- If something surprised you or you had to make a tradeoff, say so
+- ✅ Unit tests (`tests/taskService.test.js`) and integration tests (`tests/routes.test.js`) — 94% statement coverage
+- ✅ 4 bugs found and documented — see [BUGS.md](./task-api/BUGS.md)
+- ✅ 1 bug fixed: pagination offset off-by-one (1-based paging was skipping the first page)
+- ✅ New endpoint implemented: `PATCH /tasks/:id/assign`
+- ✅ Closing notes — see [NOTES.md](./task-api/NOTES.md)
 
 ---
 
@@ -45,10 +44,12 @@ task-api/
     routes/tasks.js         # Route handlers
     services/taskService.js # Business logic + in-memory data store
     utils/validators.js     # Input validation helpers
-  tests/                    # Your tests go here
+  tests/                    # Unit + integration tests
+  BUGS.md                   # Bug report
+  NOTES.md                  # Closing notes
   package.json
   jest.config.js
-ASSIGNMENT.md               # Full brief — read this first
+ASSIGNMENT.md               # Full brief
 ```
 
 > The data store is in-memory. It resets every time the server restarts.
@@ -58,14 +59,14 @@ ASSIGNMENT.md               # Full brief — read this first
 ## API Reference
 
 | Method   | Path                      | Description                              |
-|----------|---------------------------|------------------------------------------|
+|----------|---------------------------|-------------------------------------------|
 | `GET`    | `/tasks`                  | List all tasks. Supports `?status=`, `?page=`, `?limit=` |
 | `POST`   | `/tasks`                  | Create a new task                        |
 | `PUT`    | `/tasks/:id`              | Full update of a task                    |
 | `DELETE` | `/tasks/:id`              | Delete a task (returns 204)              |
 | `PATCH`  | `/tasks/:id/complete`     | Mark a task as complete                  |
 | `GET`    | `/tasks/stats`            | Counts by status + overdue count         |
-| `PATCH`  | `/tasks/:id/assign`       | **Assign a task to a user** _(to implement)_ |
+| `PATCH`  | `/tasks/:id/assign`       | Assign a task to a user ✅ implemented   |
 
 ### Task shape
 
@@ -78,7 +79,8 @@ ASSIGNMENT.md               # Full brief — read this first
   "priority": "low | medium | high",
   "dueDate": "ISO 8601 or null",
   "completedAt": "ISO 8601 or null",
-  "createdAt": "ISO 8601"
+  "createdAt": "ISO 8601",
+  "assignee": "string (optional)"
 }
 ```
 
@@ -101,13 +103,15 @@ curl "http://localhost:3000/tasks?status=pending&page=1&limit=10"
 curl -X PATCH http://localhost:3000/tasks/<id>/complete
 ```
 
+**Assign a task**
+```bash
+curl -X PATCH http://localhost:3000/tasks/<id>/assign \
+  -H "Content-Type: application/json" \
+  -d '{"assignee": "Ravinder"}'
+```
+
 ---
 
-## What to Submit
+## Submission Notes
 
-See [ASSIGNMENT.md](./ASSIGNMENT.md) for full submission requirements. At minimum, include:
-
-- **Test files** — covering the endpoints and edge cases you identified
-- **Bug report** — what you found, where in the code, and why it's a bug (not just symptoms)
-- **At least one fix** — with a note on your approach
-- **`PATCH /tasks/:id/assign` implementation** — plus a short explanation of any design decisions (validation, edge cases, etc.)
+See [BUGS.md](./task-api/BUGS.md) for the full bug report and [NOTES.md](./task-api/NOTES.md) for what I'd test next, what surprised me, and questions I'd ask before shipping this to production.
